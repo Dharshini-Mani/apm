@@ -1,0 +1,8 @@
+node_modules/
+.env
+dist/
+build/
+.vscode/
+*.db
+History_*
+chrome_output*

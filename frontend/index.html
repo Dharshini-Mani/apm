@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APM | System Performance Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Professional Application Performance Monitoring dashboard for real-time system resource tracking.">
+</head>
+<body>
+    <div class="background-mesh"></div>
+    
+    <main class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">APM<span>OS</span></span>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#dashboard" id="nav-dashboard" data-target="view-dashboard">Overview</a></li>
+                <li><a href="#apps" id="nav-apps" data-target="view-apps">Applications</a></li>
+                <li><a href="#network" id="nav-network" data-target="view-network">Network</a></li>
+                <li><a href="#settings" id="nav-settings" data-target="view-settings">Settings</a></li>
+            </ul>
+            <div class="system-health-mini">
+                <div class="health-label">System Health</div>
+                <div class="health-value">98%</div>
+                <div class="health-bar"><div class="fill" style="width: 98%"></div></div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <section class="content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search processes or tabs..." id="main-search">
+                </div>
+                <div class="system-stats">
+                    <div class="stat-item battery-status" id="battery-main">
+                        <span class="stat-icon">🔋</span>
+                        <div class="stat-info">
+                            <span class="stat-label">Battery</span>
+                            <span class="stat-value" id="battery-pct">85%</span>
+                        </div>
+                        <div class="charging-indicator" id="charging-status">Charging</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="scrollable-area">
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="tab-view active">
+                    <!-- Global Metrics Row -->
+                    <div class="metrics-grid">
+                    <div class="metric-card glass">
+                        <div class="card-header">
+                            <h3>Data Usage</h3>
+                            <span class="trend up">↑ 12%</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="big-value" id="total-data">4.2 <small>GB</small></div>
+                            <div class="mini-chart" id="data-sparkline"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass">
+                        <div class="card-header">
+                            <h3>Process Timing</h3>
+                            <span class="trend neutral">~ 0ms</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="big-value" id="avg-timing">124 <small>ms</small></div>
+                            <div class="mini-chart" id="timing-sparkline"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass">
+                        <div class="card-header">
+                            <h3>Battery Drain</h3>
+                            <span class="trend down">↓ 4%</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="big-value" id="energy-drain">18 <small>W</small></div>
+                            <div class="mini-chart" id="energy-sparkline"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance History Chart -->
+                <section class="performance-history glass">
+                    <div class="section-header" style="flex-wrap: wrap;">
+                        <h2>System Resource History</h2>
+                        
+                        <div class="history-controls" style="display: flex; gap: 10px; margin: 10px 0;">
+                            <button class="history-btn active" data-period="live">Live</button>
+                            <button class="history-btn" data-period="day">24 Hours</button>
+                            <button class="history-btn" data-period="week">7 Days</button>
+                            <button class="history-btn" data-period="month">30 Days</button>
+                        </div>
+                        
+                        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <div class="chart-legend">
+                                <div class="legend-item"><span class="dot cpu"></span> CPU Load</div>
+                                <div class="legend-item"><span class="dot mem"></span> RAM Usage</div>
+                            </div>
+                            <div class="peak-usage-indicator" style="background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; display: flex; gap: 15px;">
+                                <span>💥 Peak Data Usage: <strong id="peak-data-time" style="color: var(--accent-cyan);">Calculating...</strong></span>
+                                <span>🔋 High Battery Drain: <strong id="peak-battery-time" style="color: var(--accent-rose);">Calculating...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 300px; position: relative;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </section>
+                </div> <!-- END DASHBOARD VIEW -->
+
+                <!-- VIEW: APPS -->
+                <div id="view-apps" class="tab-view" style="display: none;">
+                <!-- Applications Monitor -->
+                <section class="apps-monitor">
+                    <div class="section-header">
+                        <h2>Application Resource Usage</h2>
+                        <div class="app-filters" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="filter-btn app-period-btn active" data-period="live">Live Processes</button>
+                            <button class="filter-btn app-period-btn" data-period="day">Today</button>
+                            <button class="filter-btn app-period-btn" data-period="week">This Week</button>
+                            <button class="filter-btn app-period-btn" data-period="month">This Month</button>
+                        </div>
+                    </div>
+                    
+                    <div class="app-list" id="app-usage-list">
+                        <!-- JS will inject app items here -->
+                    </div>
+                </section>
+
+                <!-- Chrome Specific Section (Floating Highlight) -->
+                <section class="chrome-intel glass" id="chrome-section">
+                    <div class="intel-header">
+                        <div class="intel-title">
+                            <img src="https://www.google.com/chrome/static/images/chrome-logo.svg" alt="Chrome" class="chrome-icon">
+                            <div>
+                                <h2>Google Chrome</h2>
+                                <p id="chrome-status-text">Deep Insight Monitoring Activated</p>
+                            </div>
+                        </div>
+                        <div class="intel-stats">
+                            <div class="stat"><span>Processes:</span> <strong id="chrome-proc-count">0</strong></div>
+                            <div class="stat"><span>Total RAM:</span> <strong id="chrome-total-mem">0 MB</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chrome-tabs-nav">
+                        <button class="chrome-tab-btn active" data-tab="chrome-procs">Active Processes</button>
+                        <button class="chrome-tab-btn" data-tab="chrome-history">Recent History</button>
+                    </div>
+
+                    <div id="chrome-procs" class="chrome-tab-content active">
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>Website Name</th>
+                                    <th>Time Used</th>
+                                    <th>Memory Usage</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chrome-process-list">
+                                <!-- JS will inject real process items here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="chrome-history" class="chrome-tab-content">
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>Website Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chrome-history-list">
+                                <!-- JS will inject real history items here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                </div> <!-- END APPS VIEW -->
+
+                <!-- VIEW: NETWORK -->
+                <div id="view-network" class="tab-view" style="display: none;">
+                    <br>
+                    <h2>Network Diagnostics</h2>
+                    <br>
+                    <div class="metrics-grid">
+                        <div class="metric-card glass">
+                            <div class="card-header">
+                                <h3>Connections</h3>
+                                <span class="trend neutral">Active</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="big-value" id="net-connections">0</div>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="card-header">
+                                <h3>Ping / Latency</h3>
+                                <span class="trend up">Stable</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="big-value" id="net-latency">12 <small>ms</small></div>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="chrome-intel glass" style="margin-top:20px;">
+                        <div class="intel-header">
+                            <h2>Network Interfaces</h2>
+                        </div>
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>Interface Name</th>
+                                    <th>Status</th>
+                                    <th>IPv4 Address</th>
+                                    <th>Speed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="network-interfaces">
+                                <tr><td colspan="4" style="text-align:center; padding: 2rem;">Loading network data...</td></tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </div> <!-- END NETWORK VIEW -->
+
+                <!-- VIEW: SETTINGS -->
+                <div id="view-settings" class="tab-view" style="display: none;">
+                    <br>
+                    <h2>System Settings</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem; margin-top: 5px;">Manage your dashboard preferences and system configurations.</p>
+                    
+                    <div class="settings-grid">
+                        <!-- Appearance Settings -->
+                        <section class="chrome-intel glass settings-card">
+                            <div class="intel-header" style="margin-bottom: 0;">
+                                <h2><span style="font-size: 1.2rem; margin-right: 8px;">✨</span>Appearance & Feel</h2>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Color Theme</h4>
+                                    <p>Choose your preferred interface theme.</p>
+                                </div>
+                                <select id="theme-select" class="custom-select" style="width: 140px;">
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="light">Light Mode</option>
+                                    <option value="system">System Default</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Dynamic Background</h4>
+                                    <p>Enable animated mesh background effects.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked id="bg-animation-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Compact Mode</h4>
+                                    <p>Display more data with condensed cards.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="compact-mode-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <!-- Performance Settings -->
+                        <section class="chrome-intel glass settings-card">
+                            <div class="intel-header" style="margin-bottom: 0;">
+                                <h2><span style="font-size: 1.2rem; margin-right: 8px;">⚡</span>Performance & Data</h2>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Data Refresh Rate</h4>
+                                    <p>How often system metrics are polled.</p>
+                                </div>
+                                <select id="refresh-rate" class="custom-select" style="width: 140px;">
+                                    <option value="1000">1s (Intensive)</option>
+                                    <option value="3000" selected>3s (Optimal)</option>
+                                    <option value="5000">5s (Eco Mode)</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Auto-Pause Graph</h4>
+                                    <p>Pause charting when dashboard is inactive.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked id="graph-pause-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Real-Time Website Alerts</h4>
+                                    <p>Live pop-up notifications for active websites</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked id="realtime-alert-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <!-- Notifications -->
+                        <section class="chrome-intel glass settings-card">
+                            <div class="intel-header" style="margin-bottom: 0;">
+                                <h2><span style="font-size: 1.2rem; margin-right: 8px;">🔔</span>Notifications</h2>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>High CPU Alerts</h4>
+                                    <p>Get notified when CPU exceeds 90%.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked id="cpu-alert-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Battery Drain Warning</h4>
+                                    <p>Alert when energy consumption peaks.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="battery-alert-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <!-- Account & Security -->
+                        <section class="chrome-intel glass settings-card" style="border-color: rgba(255,45,85,0.3); background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,45,85,0.05) 100%);">
+                            <div class="intel-header" style="margin-bottom: 0;">
+                                <h2><span style="font-size: 1.2rem; margin-right: 8px;">🛡️</span>Account & Security</h2>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <h4>Session Timeout</h4>
+                                    <p>Auto logout after 30 minutes of inactivity.</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked id="timeout-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row" style="margin-top: 10px; border-bottom: none;">
+                                <div class="setting-info">
+                                    <h4>Terminate Session</h4>
+                                    <p>End the current monitoring session safely.</p>
+                                </div>
+                                <button id="logout-btn" class="btn-danger">
+                                    🛑 Logout Safely
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div> <!-- END SETTINGS VIEW -->
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
